@@ -1,57 +1,48 @@
-// Display today's day and date
-var todayDate = dayjs().format('dddd, MMMM D, YYYY h:mm A');
-$("#currentDay").html(todayDate);
-
-$(document).ready(function () {
-    // saveBtn click listener 
-    $(".saveBtn").on("click", function () {
-        // Get nearby values of the description in JQuery
-        var text = $(this).siblings(".description").val();
-        var time = $(this).parent().attr("id");
-
-        // Save text in local storage
-        localStorage.setItem(time, text);
-    })
-   
-    function timeTracker() {
-        //get current number of hours.
-        var timeNow = dayjs().hour();
-
-        // loop over time blocks
-        $(".time-block").each(function () {
-            var blockTime = parseInt($(this).attr("id").split("hour")[1]);
-
-            // To check the time and add the classes for background indicators
-            if (blockTime < timeNow) {
-                $(this).removeClass("future");
-                $(this).removeClass("present");
-                $(this).addClass("past");
-            }
-            else if (blockTime === timeNow) {
-                $(this).removeClass("past");
-                $(this).removeClass("future");
-                $(this).addClass("present");
-            }
-            else {
-                $(this).removeClass("present");
-                $(this).removeClass("past");
-                $(this).addClass("future");
-
-            }
-        })
-    }
-
-    // Get item from local storage if any
-    $("#hour8 .description").val(localStorage.getItem("hour8"));
-    $("#hour9 .description").val(localStorage.getItem("hour9"));
-    $("#hour10 .description").val(localStorage.getItem("hour10"));
-    $("#hour11 .description").val(localStorage.getItem("hour11"));
-    $("#hour12 .description").val(localStorage.getItem("hour12"));
-    $("#hour13 .description").val(localStorage.getItem("hour13"));
-    $("#hour14 .description").val(localStorage.getItem("hour14"));
-    $("#hour15 .description").val(localStorage.getItem("hour15"));
-    $("#hour16 .description").val(localStorage.getItem("hour16"));
-    $("#hour17 .description").val(localStorage.getItem("hour17"));
-
-    timeTracker();
-})
+$(function () {
+    // Add a listener for click events on the save button
+    $('.saveBtn').on('click', function () {
+      // Get the id of the containing time-block
+      const timeBlockId = $(this).parent().attr('id');
+      
+      // Get the user input from the textarea within the time-block
+      const userInput = $(this).siblings('.description').val();
+      
+      // Save the user input in local storage using the time-block id as the key
+      localStorage.setItem(timeBlockId, userInput);
+    });
+  
+    // Apply the past, present, or future class to each time block
+    $('.time-block').each(function () {
+      // Get the id of the time-block
+      const timeBlockId = $(this).attr('id');
+      
+      // Get the current hour using Day.js in 24-hour format
+      const currentHour = dayjs().hour();
+      
+      // Compare the time-block id with the current hour and apply the appropriate class
+      if (parseInt(timeBlockId.split('-')[1]) < currentHour) {
+        $(this).addClass('past');
+      } else if (parseInt(timeBlockId.split('-')[1]) === currentHour) {
+        $(this).addClass('present');
+      } else {
+        $(this).addClass('future');
+      }
+    });
+  
+    // Get any user input saved in localStorage and set the values of corresponding textarea elements
+    $('.time-block').each(function () {
+      // Get the id of the time-block
+      const timeBlockId = $(this).attr('id');
+      
+      // Get the user input from localStorage using the time-block id as the key
+      const userInput = localStorage.getItem(timeBlockId);
+      
+      // Set the value of the textarea to the saved user input
+      $(this).find('.description').val(userInput);
+    });
+  
+    // Display the current date in the header of the page
+    const currentDate = dayjs().format('dddd, MMMM D, YYYY');
+    $('#currentDay').text(currentDate);
+  });
+  
